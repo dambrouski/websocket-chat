@@ -1,0 +1,43 @@
+extends bootstrap
+ 
+block content
+  div.container
+    div(class="navbar navbar-default")
+        div(class="navbar-left")
+          h1(style="margin-left:10px;")
+            span(class="glyphicon glyphicon-comment")
+            |   Chat
+        div(class="navbar-right" style="margin:10px;")
+            span(class="glyphicon glyphicon-user") 
+            span#username   Unknown
+    div.content
+      div.col-lg-8
+        div.table-responsive
+            table#chatTable(class="table table-striped")
+                tbody
+                
+            div.input-group
+                textarea.form-control(rows="3" id="field")
+                span.input-group-btn(style="margin-left:5px;")
+                    button#send(class="btn btn-default" type="button") Send
+      div.col-lg-4
+        h4
+          | Users
+          ul.list-group(id="user-list")
+            li.list-group-item
+                span(class="glyphicon glyphicon-user")
+                | mom
+            li.list-group-item
+                span(class="glyphicon glyphicon-user")
+                | dad  
+    div#myModal(class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button(type="button" class="close" data-dismiss="modal" aria-hidden="true") &times;
+                    h4(class="modal-title" id="myModalLabel") Welcome to Chat!
+                div.modal-body 
+                    input.form-control(type="text" id="modal-input-username" placeholder="Enter your name")
+                div.modal-footer
+                    button(type="button" class="btn btn-default" data-dismiss="modal") Close
+                    button(type="button" id="saveUserName" class="btn btn-primary") Save changes
