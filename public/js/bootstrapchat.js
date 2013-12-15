@@ -1,10 +1,12 @@
 require.config({
     paths: {
-        'jquery': 'http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min',
+        'jquery': 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min',
         'underscore': 'lib/underscore',
         'backbone': 'lib/backbone',
         'socket.io': 'lib/socket.io',
-        'jquery.bootstrap': 'lib/bootstrap'
+        'jquery.bootstrap': 'lib/bootstrap',
+        'backbone.iobind': 'lib/backbone.iobind',
+        'backbone.iosync': 'lib/backbone.iosync'
     },
     shim: {
         'underscore': {
@@ -19,34 +21,40 @@ require.config({
         },
         'socketio': {
             exports: 'io'
+        },
+        'backbone.iobind': {
+            deps: ["jquery", "underscore","backbone"]
+        },
+        'backbone.iosync': {
+            deps: ["jquery", "underscore", "backbone", "backbone.iobind"]
         }
     }
 });
 
 
-require(['socket.io', 'jquery.bootstrap', 'backbone', 'underscore', 'jquery'], function (io, jqueryBootstrap, Backbone, _, $) {
-    $(function () {
+require(['socket-config', 'jquery.bootstrap', 'backbone', 'underscore', 'jquery', 'backbone.iobind', 'backbone.iosync',
+            'views/message-send-view','views/user-save-form-view'],
+    function (socket, jqueryBootstrap, Backbone, _, $, backbone_iobind, backbone_iosync, MessageSendView, UserSaveForm) {
 
-        //Create user list views
-        //Create Chat views
-        
-        var messages = [];
         var users = [];
-        var socket = io.connect('http://localhost:3700');
-        var field = document.getElementById("field");
-        var sendButton = document.getElementById("send");
-        //var content = document.getElementById("content");
-        var name = document.getElementById("name");
-        var chatTable = document.getElementById("chatTable");
+        var User = Backbone.Model.extend({});
 
-        $('#myModal').modal('show');
+        var UserCollection = Backbone.Collection.extend({});
 
-        $('#saveUserName').on('click', function () {
-            $('#username').text($('#modal-input-username').val());
-            socket.emit('add-user', {
-                username: $('#modal-input-username').val()
-            });
-            $('#myModal').modal('hide');
+        var UserListView = Backbone.View.extend({});
+        var UserItemView = Backbone.View.extend({});
+
+        var App = Backbone.Router.extend({
+            routes: {
+                '': 'index',
+                '/': 'index'
+            },
+            index: function () {
+
+                new UserSaveForm();
+                new MessageSendView();
+
+            }
         });
 
         socket.on('user:create', function (data) {
@@ -62,31 +70,12 @@ require(['socket.io', 'jquery.bootstrap', 'backbone', 'underscore', 'jquery'], f
             }
         });
 
-        socket.on('message:create', function (data) {
-            if (data.message) {
-                $('#chatTable > tbody').empty();
-                messages.push(data);
-                var html = '';
-                for (var i = 0; i < messages.length; i++) {
-                    html += '<tr>';
-                    html += '<td>' + (messages[i].username ? messages[i].username : 'Server') + '</td>';
-                    html += '<td>' + messages[i].message + '</td>';
-                    html += '</tr>';
-                }
-                $('#chatTable > tbody:last').append(html);
-            } else {
-                console.log("There is a problem:", data);
-            }
+
+
+        $(function () {
+
+            new App();
+            Backbone.history.start();
+
         });
-
-        sendButton.onclick = function () {
-            var text = field.value;
-            socket.emit('message:create', {
-                message: text,
-                username: $('#username').text()
-            });
-            field.value = "";
-        };
-
     });
-});
