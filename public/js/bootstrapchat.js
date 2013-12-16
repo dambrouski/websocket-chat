@@ -33,16 +33,16 @@ require.config({
 
 
 require(['socket-config', 'jquery.bootstrap', 'backbone', 'underscore', 'jquery', 'backbone.iobind', 'backbone.iosync',
-            'views/message-send-view','views/user-save-form-view'],
-    function (socket, jqueryBootstrap, Backbone, _, $, backbone_iobind, backbone_iosync, MessageSendView, UserSaveForm) {
+            'views/message-send-view','views/user-save-form-view','singleton/current-user','views/user-list-view'],
+    function (socket, jqueryBootstrap, Backbone, _, $, backbone_iobind, backbone_iosync, MessageSendView, UserSaveForm, currentUser, UserListView) {
 
-        var users = [];
-        var User = Backbone.Model.extend({});
+        //var users = [];
+        //var User = Backbone.Model.extend({});
 
-        var UserCollection = Backbone.Collection.extend({});
+        //var UserCollection = Backbone.Collection.extend({});
 
-        var UserListView = Backbone.View.extend({});
-        var UserItemView = Backbone.View.extend({});
+        //var UserListView = Backbone.View.extend({});
+        //var UserItemView = Backbone.View.extend({});
 
         var App = Backbone.Router.extend({
             routes: {
@@ -52,12 +52,13 @@ require(['socket-config', 'jquery.bootstrap', 'backbone', 'underscore', 'jquery'
             index: function () {
 
                 new UserSaveForm();
+                new UserListView();
                 new MessageSendView();
 
             }
         });
 
-        socket.on('user:create', function (data) {
+        /*socket.on('user:create', function (data) {
             if (data.username) {
                 $('#user-list').empty();
                 users.push(data);
@@ -69,7 +70,7 @@ require(['socket-config', 'jquery.bootstrap', 'backbone', 'underscore', 'jquery'
                 console.log("There is a problem:", data);
             }
         });
-
+*/
 
 
         $(function () {

@@ -4,12 +4,14 @@ define(['socket-config', 'backbone', 'text!templates/user-save.html', 'collectio
         template: _.template(userSaveTemplate),
         events: {
             "click #save-user-btn": "saveUser",
-            "keypress #modal-input-username": "saveUserOnEnter",
+            "keypress #modal-input-username": "saveUserOnEnter"
         },
         initialize: function () {
-            _.bindAll(this, 'render', 'saveUser', 'saveUserOnEnter');
+            _.bindAll(this, 'render', 'saveUser', 'saveUserOnEnter', 'inputFocus');
             this.render();
             this.$el.modal('show');
+            this.inputFocus();
+
         },
         render: function () {
             this.$el.html(this.template);
@@ -33,11 +35,18 @@ define(['socket-config', 'backbone', 'text!templates/user-save.html', 'collectio
 
             this.$el.modal('hide');
         },
-        saveUserOnEnter: function(e){
+        saveUserOnEnter: function (e) {
             if (e.keyCode == 13) {
                 this.saveUser();
             }
+        },
+        inputFocus: function () {
+            var self = this;
+            $('.modal').on('shown.bs.modal', function () {
+                self.$('#modal-input-username').focus();
+            });
         }
+
     });
 
     return UserSaveForm;

@@ -1,4 +1,4 @@
-define(['backbone', 'models/message', 'text!templates/message-send.html'], function (Backbone, Message, messageSendTemplate) {
+define(['backbone', 'models/message', 'text!templates/message-send.html','singleton/current-user'], function (Backbone, Message, messageSendTemplate, currentUser) {
     var MessageSendView = Backbone.View.extend({
         el: $('#send-message'),
         template: _.template(messageSendTemplate),
@@ -21,7 +21,8 @@ define(['backbone', 'models/message', 'text!templates/message-send.html'], funct
             });
             var attrs = {
                 message: this.$('#field').val(),
-                username: $('#username').text()
+                fromUserId: currentUser.id,
+                username: currentUser.get('username')
             };
 
             var message = new MessageNoIOBind(attrs);

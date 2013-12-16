@@ -32,12 +32,18 @@ var Message = new mongoose.Schema({
     username: String
 });
 
+var User = new mongoose.Schema({
+    username: String
+});
+
 var MessageModel = mongoose.model('Message', Message);
+var UserModel = mongoose.model('User', User);
 
 io.sockets.on('connection', function (socket) {
 
     socket.emit('message:create', {
-       username: 'Server',  message: 'welcome to the chat'
+        username: 'Server',
+        message: 'welcome to the chat'
     });
     socket.on('message:create', function (data, callback) {
         var message = new MessageModel({
@@ -47,21 +53,23 @@ io.sockets.on('connection', function (socket) {
         message.save(function (err) {
             if (!err) {
                 io.sockets.emit('messages:create', message);
-                callback(null,message);
+                callback(null, message);
                 return console.log('created');
             } else {
                 return console.log(err);
             }
         });
     });
-    
-    socket.on('messages:read',function(data,callback){
+
+    socket.on('messages:read', function (data, callback) {
         console.log("fetching messages, data received: " + data);
-        MessageModel.find({username:data.username},function(err,messages){
+        MessageModel.find({
+            username: data.username
+        }, function (err, messages) {
             //var messages = []
-            if(err){
+            if (err) {
                 console.error(error);
-            }else{
+            } else {
                 console.log(messages);
                 callback(null, messages);
             }
@@ -69,7 +77,35 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('user:create', function (data, callback) {
-        console.log('user:create ' + data.username);
-        io.sockets.emit('user:create', data);
+        UserModel.findOne({
+            username: data.username
+        }, function (err, user) {
+            if (!err) {
+                if (user) {
+                    socket.emit('user:create', user);
+                } else {
+                    console.log("user not found, need to create");
+                    
+                    var newUser = new UserModel({
+                        username: data.username
+                    });
+                    
+                    
+                    newUser.save(function (err) {
+                        console.log(newUser);
+                        if (!err) {
+                            socket.broadcast.emit('users:create', newUser);
+                            socket.emit('user:create', newUser);
+                        } else {
+                            console.log(err);
+                        }
+                       
+                    });
+                    
+                }
+            } else {
+                console.error(err);
+            }
+        });
     });
 });
