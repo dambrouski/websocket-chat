@@ -1,5 +1,5 @@
 define(['backbone', 'socket-config', 'models/user'], function (Backbone, socket, User) {
-    var MessageCollection = Backbone.Collection.extend({
+    var UserCollection = Backbone.Collection.extend({
         model: User,
         url: 'users',
         socket: socket,
@@ -24,5 +24,5 @@ define(['backbone', 'socket-config', 'models/user'], function (Backbone, socket,
             return this;
         }
     });
-    return MessageCollection;
+    return UserCollection;
 });

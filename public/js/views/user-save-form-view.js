@@ -1,4 +1,4 @@
-define(['socket-config', 'backbone', 'text!templates/user-save.html', 'collections/messages', 'views/message-list-view'], function (socket, Backbone, userSaveTemplate, MessageCollection, MessageListView) {
+define(['socket-config', 'backbone', 'text!templates/user-save.html', 'collections/messages', 'views/message-list-view', 'collections/users', 'views/user-list-view'], function (socket, Backbone, userSaveTemplate, MessageCollection, MessageListView, UserCollection, UserListView) {
     var UserSaveForm = Backbone.View.extend({
         el: $('#myModal'),
         template: _.template(userSaveTemplate),
@@ -28,6 +28,15 @@ define(['socket-config', 'backbone', 'text!templates/user-save.html', 'collectio
             new MessageListView(messages);
 
             messages.fetch({
+                data: {
+                    username: this.$('#modal-input-username').val()
+                }
+            });
+            
+            var users = new UserCollection();
+            new UserListView(users);
+            
+            users.fetch({
                 data: {
                     username: this.$('#modal-input-username').val()
                 }

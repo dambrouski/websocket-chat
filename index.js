@@ -75,6 +75,20 @@ io.sockets.on('connection', function (socket) {
             }
         });
     });
+    
+    socket.on('users:read', function (data, callback) {
+        console.log("fetching users, data received: " + data);
+        UserModel.find({
+            username: {'$ne' : data.username}
+        }, function (err, users) {
+            if (err) {
+                console.error(error);
+            } else {
+                console.log(users);
+                callback(null, users);
+            }
+        });
+    });
 
     socket.on('user:create', function (data, callback) {
         UserModel.findOne({

@@ -52,7 +52,7 @@ require(['socket-config', 'jquery.bootstrap', 'backbone', 'underscore', 'jquery'
             index: function () {
 
                 new UserSaveForm();
-                new UserListView();
+                //new UserListView();
                 new MessageSendView();
 
             }
